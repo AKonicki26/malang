@@ -1,2 +1,2 @@
-# its420-capstone
-My Capstone project for Champlain College
+# MaLang
+A programming language designed for ethical malware development
