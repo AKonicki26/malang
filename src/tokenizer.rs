@@ -1,5 +1,5 @@
-use fancy_regex::Regex;
 use crate::tokenizer::Token::Whitespace;
+use fancy_regex::Regex;
 
 #[derive(Debug)]
 #[allow(dead_code)]
@@ -71,7 +71,7 @@ pub enum Token {
     LessThan { index: i128 },
 
     // End of File
-    EOF
+    EOF,
 }
 
 trait StringExt {
@@ -87,7 +87,6 @@ impl StringExt for String {
 }
 
 macro_rules! token {
-
     // Version for when no variables are used
     ($regex: expr, |_, _| $body:expr) => {
         (Regex::new($regex).unwrap(), |_, _| $body)
@@ -100,10 +99,10 @@ macro_rules! token {
 
     // Version for when both variables are used
     ($regex:expr, |$index:ident, $val:ident| $body:expr) => {
-        (Regex::new($regex).unwrap(), |$index: i128, $val: String| $body)
+        (Regex::new($regex).unwrap(), |$index: i128, $val: String| {
+            $body
+        })
     };
-
-
 }
 
 lazy_static::lazy_static! {
@@ -185,7 +184,6 @@ pub struct Tokenizer {}
 
 impl Tokenizer {
     pub(crate) fn tokenize(input: &str) -> Vec<Token> {
-
         println!("Tokenizing \"{}\"...", input);
 
         let mut index = 0;
@@ -197,18 +195,14 @@ impl Tokenizer {
 
             // for every token we know about
             for (r, creator) in TOKEN_CONVERTERS.iter() {
-
                 // make each regex the start of the line (only test the start of input)
                 let regex = Regex::new(&(r"^".to_string() + &*r.to_string())).unwrap();
-
 
                 // get the first match
                 let first_match = regex.find(&input[index..]);
 
-
                 // if we have a match...
                 if first_match.is_ok() {
-
                     let match_optional = first_match.unwrap();
 
                     if match_optional.is_none() {
@@ -229,7 +223,7 @@ impl Tokenizer {
                     index += match_str.end() - match_str.start();
 
                     // we dont care about whitespace or linebreaks
-                    if !(matches!(token, Whitespace) || matches!(token, Token::LineBreak {..})) {
+                    if !(matches!(token, Whitespace) || matches!(token, Token::LineBreak { .. })) {
                         // add tokens to list
                         tokens.push(token);
                     }
@@ -245,7 +239,6 @@ impl Tokenizer {
                 break;
             }
         }
-
 
         println!("Tokenizer finished: {:?}", tokens);
 

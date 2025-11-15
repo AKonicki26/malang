@@ -5,7 +5,7 @@ mod expression;
 mod statement;
 
 pub struct Parser {
-    tokens: Vec<Token>
+    tokens: Vec<Token>,
 }
 
 type StatementList = Vec<Box<dyn Statement>>;

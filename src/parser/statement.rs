@@ -1,5 +1,3 @@
 use std::fmt::Debug;
 
-pub trait Statement : Debug {
-
-}
+pub trait Statement: Debug {}
